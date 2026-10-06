@@ -6,7 +6,7 @@ export function notFound(_req: Request, res: Response) {
 }
 
 export function errorHandler(
-    err: unknown,
+    err: any,
     _req: Request,
     res: Response,
     _next: NextFunction
@@ -18,6 +18,14 @@ export function errorHandler(
         });
     }
 
+    // UUID con formato inválido
+    if (err?.code === "22P02")
+        return res.status(400).json({ error: "Identificador inválido " });
+
+     // Violación de UNIQUE (dos peticiones con el mismo email a la vez)
+    if (err?.code === "23505")
+        return res.status(400).json({ error: "El registro ya existe " });
+
     console.log(err);
-    res.status(500).json({error: "Error interno del servidor"});
+    res.status(500).json({ error: "Error interno del servidor" });
 }
