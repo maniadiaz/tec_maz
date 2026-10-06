@@ -5,7 +5,7 @@ import { connectDB } from "./config/db.js";
 async function start() {
     await connectDB();
     app.listen(env.PORT, () => {
-        console.log(`API escuchando en http://locahost:${env.PORT}`);
+        console.log(`API escuchando en http://localhost:${env.PORT}`);
     });
 }
 
