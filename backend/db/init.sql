@@ -1,0 +1,3 @@
+CREATE USER app WITH PASSWORD 'secret';
+CREATE DATABASE appdb OWNER app;
+\q
