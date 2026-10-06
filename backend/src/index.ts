@@ -1,22 +1,11 @@
-import "dotenv/config";
-import express from "express";  
-import cors from "cors";
+import app from "./app.js";
 import { env } from "./config/env.js";
 import { connectDB } from "./config/db.js";
 
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-app.get("/health", (req, res) => {
-    res.json({ status: 'ok'});
-});
-
 async function start() {
     await connectDB();
-    app.listen(env.PORT, () =>{
-        console.log(`API escuchando http://localhost:${env.PORT}`);
+    app.listen(env.PORT, () => {
+        console.log(`API escuchando en http://locahost:${env.PORT}`);
     });
 }
 
