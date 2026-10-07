@@ -3,7 +3,7 @@ import cors from "cors";
 
 // Routers
 import usersRouter from "./module/users/users.router.js";
-
+import authRouter  from "./module/auth/auth.router.js"
 import { notFound, errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
@@ -17,6 +17,7 @@ app.get("/health", (_req, res) => {
 
 
 // Aquí irán las rutas de cada modulos ( Users, Auth. etc..)
+app.use("/auth",authRouter);
 app.use("/users", usersRouter);
 
 app.use(notFound);
