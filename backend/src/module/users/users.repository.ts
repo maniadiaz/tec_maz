@@ -46,7 +46,7 @@ export const usersRepository = {
     },
 
     // Metodo para actualizar datos del usuario
-    async update(id: string, data: {name?: string, email?: string}){
+    async update(id: string, data: { name?: string, email?: string }) {
         const { rows } = await pool.query(
             `UPDATE users
             SET name = COALESCE($2, name),
@@ -60,14 +60,25 @@ export const usersRepository = {
     },
 
     // Metodo para hacer un Soft Delete al usuario
-    async delete(id: string){
-        const { rowCount  } = await pool.query(
+    async delete(id: string) {
+        const { rowCount } = await pool.query(
             `UPDATE users
             SET deleted_at = now(), updated_at = now()
             WHERE id = $1 AND deleted_at IS NULL`,
             [id]
         );
-        return (rowCount ?? 0 ) > 0;
+        return (rowCount ?? 0) > 0;
+    },
+
+    // Metodo para Login
+    async findAuthByEmail(email: string) {
+        const { rows } = await pool.query(
+            `SELECT ${COLUMNS}, password_hash
+            FROM users
+            WHERE email = $1 AND deleted_at IS NULL`,
+            [email]
+        );
+        return rows[0] ?? null;
     }
-     
+
 }
