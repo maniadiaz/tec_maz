@@ -38,7 +38,7 @@ export const usersRepository = {
     async create(data: { name: string, email: string, passwordHash: string }) {
         const { rows } = await pool.query(
             `INSERT INTO users (name, email, password_hash)
-            VALIE ($1, $2, $3)
+            VALUES ($1, $2, $3)
             RETURNING ${COLUMNS}`,
             [data.name, data.email, data.passwordHash]
         );
