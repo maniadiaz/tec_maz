@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { usersRepository  } from "./users.repository.js";
+import { usersRepository } from "./users.repository.js";
 import { AppError } from "../../utils/AppError.js";
 import type { CreateUserInput, updateUserInput } from "./users.schema.js";
 
@@ -47,4 +47,22 @@ export const usersService = {
         const deleted = await usersRepository.delete(id);
         if (!deleted) throw new AppError("Usuario no encontrado", 404);
     },
+
+    async updateRole(actorId: string, targetId: string, role: "user" | "admin") {
+        if (actorId === targetId) {
+            throw new AppError("No puede cambiar tu propio rol", 403);
+        }
+        const user = await usersRepository.updateRole(targetId, role);
+        if (!user) throw new AppError("Usuario no econtrado", 404);
+        return user;
+    },
+
+    async updateStatus(actorId: string, targetId: string, isActive: boolean) {
+        if (actorId === targetId) {
+            throw new AppError("No puede bloquarte a ti mismo", 403);
+        }
+        const user = await usersRepository.updateStatus(targetId, isActive);
+        if (!user) throw new AppError("Usuario no encontrado", 404);
+        return user;
+    }
 };

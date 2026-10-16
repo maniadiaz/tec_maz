@@ -24,4 +24,22 @@ export const usersController = {
         await usersService.remove(req.params.id as string);
         res.status(204).send();
     },
+
+    async updateRole(req: Request, res: Response) {
+        const user = await usersService.updateRole(
+            req.user!.id,
+            req.params.id as string,
+            req.body.role
+        );
+        res.json(user);
+    },
+
+    async updateStatus(req: Request, res: Response) {
+        const user = await usersService.updateStatus(
+            req.user!.id,
+            req.params.id as string,
+            req.body.is_active
+        );
+        res.json(user);
+    },
 };

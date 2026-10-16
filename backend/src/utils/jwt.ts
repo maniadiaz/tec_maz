@@ -11,3 +11,12 @@ export function signAccessToken(payload: AccessTokenPayload) {
         expiresIn: env.JWT_ACCESS_EXPIRES_IN as SignOptions["expiresIn"],
     });
 }
+
+export function verifyAccessToken(token: string): AccessTokenPayload {
+    const payload = jwt.verify(token, env.JWT_ACCESS_SECRET);
+
+    if (typeof payload === "string" || !payload.sub || !payload.role) {
+        throw new Error("Payload inválido");
+    }
+    return { sub: payload.sub, role: payload.role };
+}

@@ -21,5 +21,13 @@ export const updateUserSchema = z
         message: "Envía almenos un campo para actualizar",
     });
 
+export const updateRoleSchema = z.object({
+    role: z.enum(["user", "admin"]),
+});
+
+export const updateStatusShema = z.object({
+    is_active: z.boolean(),
+});
+
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type updateUserInput = z.infer<typeof updateUserSchema>;

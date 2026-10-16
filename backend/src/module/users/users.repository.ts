@@ -79,6 +79,27 @@ export const usersRepository = {
             [email]
         );
         return rows[0] ?? null;
-    }
+    },
 
+    async updateRole(id: string, role: "user" | "admin") {
+        const { rows } = await pool.query(
+            `UPDATE users
+            SET role = $2, updated_at = now()
+            WHERE id = $1 AND deleted_at IS NULL
+            RETURNING ${COLUMNS}`,
+            [id, role]
+        );
+        return rows[0] ?? null;
+    },
+
+    async updateStatus(id: string, isActive: boolean) {
+        const { rows } = await pool.query(
+            `UPDATE users
+            SET is_active = $2, updated_at = now()
+            WHERE id = $1 AND deleted_at IS NULL
+            RETURNING ${COLUMNS}`,
+            [id, isActive]
+        );
+        return rows[0] ?? null;
+    }
 }

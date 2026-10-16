@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { authService } from "./auth.service.js";
+import { usersService } from "../users/users.service.js";
 
 export const authController = {
     async register(req: Request, res: Response) {
@@ -9,5 +10,9 @@ export const authController = {
 
     async login(req: Request, res: Response) {
         res.json(await authService.loging(req.body));
+    },
+
+    async me(req: Request, res: Response) {
+        res.json(await usersService.getById(req.user!.id));
     },
 }
