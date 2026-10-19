@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { usersRepository } from "./users.repository.js";
 import { AppError } from "../../utils/AppError.js";
 import type { CreateUserInput, updateUserInput } from "./users.schema.js";
+import { refreshTokensRepository } from "../auth/refresh-tokens.repository.js";
 
 export const usersService = {
     list() {
@@ -43,11 +44,6 @@ export const usersService = {
         return user;
     },
 
-    async remove(id: string) {
-        const deleted = await usersRepository.delete(id);
-        if (!deleted) throw new AppError("Usuario no encontrado", 404);
-    },
-
     async updateRole(actorId: string, targetId: string, role: "user" | "admin") {
         if (actorId === targetId) {
             throw new AppError("No puede cambiar tu propio rol", 403);
@@ -57,12 +53,22 @@ export const usersService = {
         return user;
     },
 
+    // en updateStatus, después de actualizar:
     async updateStatus(actorId: string, targetId: string, isActive: boolean) {
         if (actorId === targetId) {
-            throw new AppError("No puede bloquarte a ti mismo", 403);
+            throw new AppError("No puedes bloquearte a ti mismo", 403);
         }
         const user = await usersRepository.updateStatus(targetId, isActive);
         if (!user) throw new AppError("Usuario no encontrado", 404);
+
+        if (!isActive) await refreshTokensRepository.revokeAllByUser(targetId);
         return user;
-    }
+    },
+
+    // en remove, después de eliminar:
+    async remove(id: string) {
+        const deleted = await usersRepository.delete(id);
+        if (!deleted) throw new AppError("Usuario no encontrado", 404);
+        await refreshTokensRepository.revokeAllByUser(id);
+    },
 };

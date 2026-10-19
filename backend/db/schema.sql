@@ -14,3 +14,17 @@ CREATE TABLE IF NOT EXISTS users (
 -- El email solo debe ser único entre usuarios NO eliminados
 CREATE UNIQUE INDEX IF NOT EXISTS users_email_unique
   ON users (email) WHERE deleted_at IS NULL;
+
+
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  family_id   UUID NOT NULL,
+  token_hash  TEXT NOT NULL UNIQUE,
+  expires_at  TIMESTAMPTZ NOT NULL,
+  revoked_at  TIMESTAMPTZ,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS refresh_tokens_user_idx   ON refresh_tokens (user_id);
+CREATE INDEX IF NOT EXISTS refresh_tokens_family_idx ON refresh_tokens (family_id);
