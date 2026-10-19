@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import { env } from "./config/env.js";
+import { globalLimiter } from "./middlewares/rate-limit.js";
 
 
 // Routers
@@ -12,14 +13,20 @@ import { notFound, errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 
+app.set("trust proxy", env.TRUST_PROXY);
+
 app.use(helmet());
 app.use(cors({ origin: env.FRONTEND_URL, credentials: true }));
-app.use(express.json());
-app.use(cookieParser());
 
+// /health antes del limite: los monitores no debe  de consumir cuota
 app.get("/health", (_req, res) => {
     res.json({ status: "ok" });
 })
+
+
+app.use(globalLimiter);
+app.use(express.json({limit: "10kb"}));
+app.use(cookieParser());
 
 
 // Aquí irán las rutas de cada modulos ( Users, Auth. etc..)

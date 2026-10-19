@@ -9,6 +9,7 @@ const envShema = z.object({
     JWT_ACCESS_EXPIRES_IN: z.string().default("15m"),
     JWT_REFRESH_EXPIRES_DAYS: z.coerce.number().default(7),
     FRONTEND_URL: z.string().default("http://localhost:5173"),
+    TRUST_PROXY: z.coerce.number().default(0),
 });
 
 export const env = envShema.parse(process.env);

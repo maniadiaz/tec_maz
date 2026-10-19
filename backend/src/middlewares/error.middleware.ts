@@ -22,9 +22,17 @@ export function errorHandler(
     if (err?.code === "22P02")
         return res.status(400).json({ error: "Identificador inválido " });
 
-     // Violación de UNIQUE (dos peticiones con el mismo email a la vez)
+    // Violación de UNIQUE (dos peticiones con el mismo email a la vez)
     if (err?.code === "23505")
         return res.status(400).json({ error: "El registro ya existe " });
+
+    // Body demasiado grande
+    if (err?.type === "entity.too.large")
+        return res.status(413).json({error: "El cuerpo de la petición es demasiado grande"})
+
+    // JSON mal formado
+    if (err?.type === "entity.parse.failed")
+        return res.status(400).json({error: "JSON inválido"});
 
     console.log(err);
     res.status(500).json({ error: "Error interno del servidor" });
